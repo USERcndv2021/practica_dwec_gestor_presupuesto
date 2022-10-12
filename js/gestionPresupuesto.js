@@ -24,15 +24,28 @@ function mostrarPresupuesto() {
     this.valor = valor;
     this.valor = valor < 0 || isNaN(this.valor) ? 0: this.valor;
     
-  }
-  
-   var gasto1 = new CrearGasto( "Gasto", 70);
-   
-    
-    function mostrarGasto(){
-      return `Gasto correspondiente a ${gasto1.descripcion} con valor ${gasto1.valor} €`;
+    this.mostrarGasto = function(){
+      return `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €`;
     }
-    console.log(mostrarGasto( ));
+
+     this.actualizarDescripcion = function(d){
+      this.descripcion = d;
+    }
+
+    this.actualizarValor = function(nuevoValor){
+      this.valor = nuevoValor;
+      
+      this.nuevoValor = nuevoValor < 0 || isNaN(this.nuevoValor) ? this.valor: this.nuevoValor;
+    
+  }
+    
+    
+  
+    
+}
+
+     
+    
     
     
 
@@ -41,17 +54,11 @@ function mostrarPresupuesto() {
     
  
     
-    function actualizarDescripcion(d){
-      
-      
-  }
+   
  
 
     
-  function actualizarValor(v){
-    
-
-  }
+  
   
  
    
