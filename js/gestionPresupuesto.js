@@ -42,7 +42,6 @@ function mostrarPresupuesto() {//bien
       this.etiquetas = [];
     }
     
-    
     this.mostrarGasto = function(){//bien
       return `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €`;
     },
@@ -57,20 +56,16 @@ function mostrarPresupuesto() {//bien
       }
   },
 
-
-
   this.mostrarGastoCompleto = function(){//mal-prueba
     let res;
     res = this.mostrarGasto() +  ".";
     res = res + `\nFecha: ${new Date(this.fecha).toLocaleString()}\n`;
-    res += `Etiquetas:\n-` ;
-     for(let i = 0; i < this.etiquetas.length; i++) {
-      res = res + ` ${this.etiquetas[i]}\n `;
-     
+    res += `Etiquetas:\n`;
+     for (let i = 0; i < this.etiquetas.length; i++) {
+      res += ` ${this.etiquetas[i]}\n`;
      }
      return res;
   },
-
 
   this.actualizarFecha = function(nueva){//bien
     nueva = Date.parse(nueva);
@@ -80,74 +75,46 @@ function mostrarPresupuesto() {//bien
 
   },
 
-
-
-
-
-  this.anyadirEtiquetas = function(...eA){//mal-prueba
-
-    if (!this.etiquetas){
-      this.etiquetas = [eA]
-     } else {
-      this.etiquetas.push(eA);
-     }  
+  this.anyadirEtiquetas = function(...eA){//bien
+    let pos;
+    for(let i of eA){
+      pos = this.etiquetas.indexOf(i);
+      if(pos == -1){
+        this.etiquetas.push(i);
+      }
+    }
   
     },
   
-
- 
-  this.borrarEtiquetas = function(...eb){//mal-prueba
-   
-      if(eb){
-        for(let i = 0; i < this.etiquetas.length; i++){
-        this.etiquetas.splice(1, 1);
-      }
+  this.borrarEtiquetas = function(...eb){//bien
+   let pos;
+   for(let i of eb){
+    pos = this.etiquetas.indexOf(i);
+    if(pos!= -1){
+      this.etiquetas.splice(pos, 1);
     }
+   }
+      
 },
 
+this.obtenerPeriodoAgrupacion =function(periodo){//bien JS-III
+  let fecha = new Date(this.fecha);
+  let fechaString = fecha.toISOString();
+   if (periodo == "dia"){
+    return fechaString.substring(0,10);
 
-this.obtenerPeriodoAgrupacion =function(periodo){//mal-prueba
-  var validarperiodo = periodo;
-  var periodo = new Date(),
-  mes = '' + (periodo.getMonth()),
-  dia = '06',
-  anyo = periodo.getFullYear() -1;
+   }else if (periodo == "mes"){
+    return fechaString.substring(0,7);
 
-//  const periodo = new Date();
-if (validarperiodo == "dia")
-{
-  if (mes.length == 1){ 
-    mes = '0' + mes--;}
-  if (dia.length < 2) 
-    dia = '0' + dia;
-  
-  return [anyo, mes, dia].join('-');
+   }else if (periodo == "anyo"){
+    return fechaString.substring(0,4);
+   }
+
 }
 
-if (validarperiodo == "mes")
-{
-  if (mes.length == 1){ 
-    mes = '0' + mes--;}
+}  
   
-  return [anyo, mes].join('-');
-}
-
-if (validarperiodo == "anyo")
-{
-  return [anyo].join('-');
-}
-}}  
-  
- 
-
-
-
-
-
-
-
-
-
+ //------>FIN DE OBJETO GASTO Y SUS METODOS<------
 
 
 
@@ -187,27 +154,41 @@ function calcularBalance(){
  return  presupuesto - calcularTotalGastos(gastos);//bien
 }
     
-function filtrarGastos(){//por hacer
-
-
-
+function filtrarGastos(opciones){//por hacer //----->Javascript III<------
+  
+  
+  
+  
+  
 }
 
 
-function agruparGastos(periodo, etiquetas, fechaDesde, fechaHasta){//mal- prueba
-  let dia;
-  let mes;
-  let anyo;
+function agruparGastos(periodo, etiquetas, fechaDesde, fechaHasta){//
+  let opciones = {};
+  opciones.periodo = periodo;
+  opciones.etiquetas = etiquetas;
+  opciones.fechaDesde = fechaDesde;
+  opciones.fechaHasta = fechaHasta;
 
-  if(periodo == dia || periodo == mes || periodo == anyo){
-    periodo = mes;
-  }
-    etiquetas = [{}];
-    etiquetas.find(gastos => gastos.etiquetas)
+   let gastosFiltrados = filtrarGastos(opciones);
+   let funReduce = function(acc, gasto){
+   let perAgrup = gasto.obtenerPeriodoAgrupacion(periodo);
+    if (acc[perAgrup]){
+      acc[perAgrup] = acc[perAgrup] + gasto.valor;
 
+    }else{
+      acc[perAgrup] = gasto.valor;
 
+    }
 
+ //console.log("Gasto: " + gasto.valor + " " + new Date(gasto.fecha));
+ //console.log("Acumulador: " + JSON.stringify(acc));
+ return acc;
 
+   };
+    let acumulador = {};
+    return gastos.reduce(funReduce, acumulador);
+     
  
 }
   
