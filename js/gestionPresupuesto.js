@@ -56,13 +56,13 @@ function mostrarPresupuesto() {//bien
       }
   },
 
-  this.mostrarGastoCompleto = function(){//mal-prueba
+  this.mostrarGastoCompleto = function(){//bien
     let res;
     res = this.mostrarGasto() +  ".";
     res = res + `\nFecha: ${new Date(this.fecha).toLocaleString()}\n`;
     res += `Etiquetas:\n`;
-     for (let i = 0; i < this.etiquetas.length; i++) {
-      res += ` ${this.etiquetas[i]}\n`;
+     for (let e of this.etiquetas) {
+      res += `- ${e}\n`;
      }
      return res;
   },
@@ -113,10 +113,9 @@ this.obtenerPeriodoAgrupacion =function(periodo){//bien JS-III
 }
 
 }  
-  
  //------>FIN DE OBJETO GASTO Y SUS METODOS<------
 
-
+//Funciones de los gastos
 
 function listarGastos(){//bien
   return gastos;
@@ -153,24 +152,53 @@ function calcularTotalGastos(){//bien
 function calcularBalance(){
  return  presupuesto - calcularTotalGastos(gastos);//bien
 }
+
     
-function filtrarGastos(opciones){//por hacer //----->Javascript III<------
+function filtrarGastos(opciones){//bien //----->Javascript III<------
   
-  
-  
-  
+  return gastos.filter(function(d){
+    var resultado = true;
+    if (opciones.fechaDesde){
+      var fD = Date.parse(opciones.fechaDesde);
+      resultado = resultado && (d.fecha >= fD);
+    }
+    if (opciones.fechaHasta){
+      var fH = Date.parse(opciones.fechaHasta);
+      resultado = resultado && (d.fecha <= fH);
+    }
+     if (opciones.valorMinimo){
+      resultado = resultado && (d.valor >= opciones.valorMinimo)
+    }
+    if (opciones.valorMaximo){
+      resultado = resultado && (d.valor <= opciones.valorMaximo)
+    }
+    if (opciones.descripcionContiene){
+      resultado = resultado && (d.descripcion.indexOf(opciones.descripcionContiene) > -1);
+    }
+    if (opciones.etiquetasTiene){
+      let etiqSi = false;
+      for (let e of opciones.etiquetasTiene){
+        if (d.etiquetas.indexOf(e) > -1){
+          etiqSi = true;
+        }
+      }
+      resultado = resultado && etiqSi;
+    }
+    return resultado;
+
+  })
   
 }
 
 
-function agruparGastos(periodo, etiquetas, fechaDesde, fechaHasta){//
-  let opciones = {};
+function agruparGastos(periodo, etiquetas, fechaDesde, fechaHasta){// consultar error.
+  /*let opciones = {};
   opciones.periodo = periodo;
   opciones.etiquetas = etiquetas;
   opciones.fechaDesde = fechaDesde;
   opciones.fechaHasta = fechaHasta;
-
-   let gastosFiltrados = filtrarGastos(opciones);
+*/
+    filtrarGastos({periodo: periodo, etiquetasTiene: etiquetas, fechaDesde: fechaDesde, fechaHasta: fechaHasta});
    let funReduce = function(acc, gasto){
    let perAgrup = gasto.obtenerPeriodoAgrupacion(periodo);
     if (acc[perAgrup]){
@@ -192,23 +220,6 @@ function agruparGastos(periodo, etiquetas, fechaDesde, fechaHasta){//
  
 }
   
-     
-    
- 
-    
-   
- 
-
-    
-  
-  
- 
-   
-  
-
-
- 
-
 
 // NO MODIFICAR A PARTIR DE AQUÍ: exportación de funciones y objetos creados para poder ejecutar los tests.
 // Las funciones y objetos deben tener los nombres que se indican en el enunciado
@@ -223,7 +234,6 @@ export   {
     calcularTotalGastos,
     calcularBalance,
     filtrarGastos,
-    agruparGastos
-
+    agruparGastos,
 
 }
