@@ -5,9 +5,6 @@ function mostrarDatoEnId(idElemento, valor){ //para mostar el valor de un un ele
     elemento.innerText = valor;
 }
 
-
-
- 
 function mostrarGastoWeb(idElemento, gasto){ //se crea los elementos div (primero el padre que es <div gasto), en su interior iran los nodos
                                              //hijos descripción, fecha, valor,etiquetas. Cada nodo en un div independiente.
   //div gasto
@@ -38,68 +35,65 @@ function mostrarGastoWeb(idElemento, gasto){ //se crea los elementos div (primer
  //div.etiquetas
   let divEtiquetas = document.createElement("div");
   divEtiquetas.className = "gasto-etiquetas";
+  divGasto.append(divEtiquetas); //Componer objeto gasto -- añadir el nodo divEtiquetas al nodo padre(divGasto)
   
     for ( let etiqueta of gasto.etiquetas){
       let spanEti = document.createElement("span");
       spanEti.className = "gasto-etiquetas-etiqueta"
       spanEti.innerText = etiqueta;
       
+      /////manejador borrarEtiquetas//////////////////////bien////
        let manejadorBorrarEtiqueta = new borrarEtiquetasHandle();
        manejadorBorrarEtiqueta.gasto = gasto;
-       manejadorBorrarEtiqueta.eliminarEtiqueta = etiqueta;
+       manejadorBorrarEtiqueta.etiqueta = etiqueta;
        spanEti.addEventListener("click", manejadorBorrarEtiqueta);
 
       divEtiquetas.append(spanEti);
   }
-  divGasto.append(divEtiquetas);  //Componer objeto gasto -- añadir el nodo divEtiquetas al nodo padre(divGasto)
+    
 
-  /////Evento borrar etiqueta////////////////////////////
- 
-
-
-
-
-
-
-  ////////Crear otro "div" en la función mostrarGastoWeb para contener los botones editar y borrar////////
-  let divGasto2 = document.createElement("div");
-  divGasto2.className = "gasto-botones"
-  let contenedor2 = document.getElementById(idElemento);
-  contenedor2.append(divGasto2);
-
- ///Crear botón editar//////////////////////
+  
+ ///Crear botón editar//////////////////////bien//////
   let botonEditar = document.createElement("button");
   botonEditar.className = "gasto-editar"
   botonEditar.innerHTML = "Editar";
-  divGasto2.append(botonEditar);
-/////manejadorEditar//////////////////////
+  divGasto.append(botonEditar);
+
+/////manejadorEditar//////////////////////bien/////
   let manejadorEditar = new editarHandle();
-  manejadorEditar.gastoEditar = gasto;
+  manejadorEditar.gasto = gasto;
   botonEditar.addEventListener("click", manejadorEditar);
 
 
 
-//////////Crear botón borrar///////////////
+//////////Crear botón borrar///////////////bien////
   let botonBorrar = document.createElement("button");
   botonBorrar.className = "gasto-borrar"
+  botonBorrar.type = "button";
   botonBorrar.innerHTML = "Borrar";
-  divGasto2.append(botonBorrar);
+  divGasto.append(botonBorrar);
 
-  /////manejadorBorrar///////////////////
+  /////manejadorBorrar///////////////////bien//////
   let manejadorBorrar = new borrarHandle();
   manejadorBorrar.gastoBorrar = gasto;
   botonBorrar.addEventListener("click", manejadorBorrar);
 
-  
 
 }
 
-
-
-
-
-//////////Función Handle////////
+//////////Función Handle////////bien///////
 function editarHandle(){
+  this.handleEvent = function(){
+    let descripcion = prompt("Introduzca la descripción: ");
+    let valor = Number(prompt("Introduzca el valor: "));
+    let fecha = prompt("Introduzca la fecha: ");
+    let etiquetas = prompt("Introduzca las etiquetas: ");
+    this.gasto.actualizarDescripcion(descripcion);
+    this.gasto.actualizarValor(valor);
+    this.gasto.actualizarFecha(fecha);
+    this.gasto.anyadirEtiquetas(...etiquetas.split(","));
+    repintar();
+  }
 
 }
 
@@ -113,16 +107,13 @@ function borrarHandle(){
 
   function borrarEtiquetasHandle(){
     this.handleEvent = function(){
-      gesPresupuesto.borrarEtiquetas(this.etiqueta);
+      this.gasto.borrarEtiquetas(this.etiqueta);
       repintar();
     }
 
   }
   
-
-  
-
-//////////////////////////////////////////////////////////////---->Bien<---
+//////////////////////////////////////////////////////////////---->Bien<---//////////////
 
 function mostrarGastosAgrupadosWeb(idElemento, agrup, periodo){ 
   let divAgrup = document.createElement("div");  ///div agrupación html
@@ -168,7 +159,7 @@ export{
 
 
 
-//////Eventos//////////////// PREUEBA//////////
+//////SigueEventos//////////////// bien//////////
 function actualizarPresupuestoWeb(){
   let anyadirValor = prompt("Añade un presupuesto: ");
   parseFloat(anyadirValor);
@@ -189,7 +180,7 @@ function actualizarPresupuestoWeb(){
 
   mostrarDatoEnId("balance-total", gesPresupuesto.calcularBalance());
 
-   let listado = document.createElementById("listado-gastos-completo");
+   let listado = document.getElementById("listado-gastos-completo");
    listado.innerHTML = " ";
 
   for (let g of gesPresupuesto.listarGastos()){
@@ -211,7 +202,7 @@ function actualizarPresupuestoWeb(){
 
  let botonAnyadirGasto = document.getElementById("anyadirgasto");
   botonAnyadirGasto.addEventListener("click", nuevoGastoWeb);
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////Formulario/////////Prueba/////////
 
