@@ -9,7 +9,7 @@ gesPresupuestoWeb.mostrarDatoEnId("presupuesto", gesPresupuesto.mostrarPresupues
 let gasto1 =  new gesPresupuesto.CrearGasto("Compra carne", 23.44, "2021-10-06", "casa", "comida");
 gesPresupuesto.anyadirGasto(gasto1);
 
-gasto1 = new gesPresupuesto.CrearGasto("Compra fruta y verdura", 14.25, "2021-09-06", "supermercado", "comida");
+ gasto1 = new gesPresupuesto.CrearGasto("Compra fruta y verdura", 14.25, "2021-09-06", "supermercado", "comida");
 gesPresupuesto.anyadirGasto(gasto1);
 
 gasto1 = new gesPresupuesto.CrearGasto("Bonobús", 18.60, "2020-05-26", "transporte");
@@ -31,21 +31,40 @@ for (let g of gesPresupuesto.listarGastos()){
     gesPresupuestoWeb.mostrarGastoWeb("listado-gastos-completo", g);
 }
 
-///////////////////////////////////////////////////////---Prueba<---
+///////////////////////////////////////////////////////---Agrupar Gastos<---
 
-gesPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-dia",gesPresupuesto.agruparGastos());
-
-
-gesPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-mes",gesPresupuesto.agruparGastos());
+gesPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-dia",gesPresupuesto.agruparGastos("dia"), "día");
 
 
-gesPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-anyo",gesPresupuesto.agruparGastos());
+gesPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-mes",gesPresupuesto.agruparGastos("mes"), "mes");
+
+
+gesPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-anyo",gesPresupuesto.agruparGastos("anyo"), "año");
 ///////////////////////////////////////////////////////
 
 
 //////////////////////////Prueba filtrados----//////////////////////
 
 
-//gesPresupuestoWeb.mostrarGastoWeb("listado-gastos-filtrado-2", gesPresupuesto.filtrarGastos());
+for (let gt of gesPresupuesto.filtrarGastos({fechaDesde:"2021-09-01", fechaHasta:"2021-09-30"})){
+    gesPresupuestoWeb.mostrarGastoWeb("listado-gastos-filtrado-1", gt);
+}
 
-//gesPresupuestoWeb.mostrarGastoWeb("listado-gastos-filtrado-3", gesPresupuesto.filtrarGastos());
+
+for (let gt of gesPresupuesto.filtrarGastos({valorMinimo: 50})){
+    gesPresupuestoWeb.mostrarGastoWeb("listado-gastos-filtrado-2", gt);
+}
+
+
+for (let gt of gesPresupuesto.filtrarGastos({etiquetas: "seguros", valorMinimo:200})){
+    gesPresupuestoWeb.mostrarGastoWeb("listado-gastos-filtrado-3", gt);
+}
+
+
+for (let gt of gesPresupuesto.filtrarGastos({etiquetas:"comida", etiquetas:"transporte", valorMinimo: 50})){
+    gesPresupuestoWeb.mostrarGastoWeb("listado-gastos-filtrado-4", gt);
+}
+
+
+////////////////////////////////////////////
+

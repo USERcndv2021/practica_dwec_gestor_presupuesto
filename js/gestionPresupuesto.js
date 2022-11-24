@@ -20,7 +20,7 @@ function mostrarPresupuesto() {//bien
     return "Tu presupuesto actual es de " +""+ presupuesto + " " + "€";
 }
     
-  function CrearGasto(descripcion, valor, fecha,... etiquetas) {//bien
+  function CrearGasto(descripcion, valor, fecha, ... etiquetas) {//bien
     //TODO
     this.descripcion = descripcion;
     this.valor = valor;
@@ -192,12 +192,7 @@ function filtrarGastos(opciones){//bien //----->Javascript III<------
 
 
 function agruparGastos(periodo, etiquetas, fechaDesde, fechaHasta){// consultar error.
-  /*let opciones = {};
-  opciones.periodo = periodo;
-  opciones.etiquetas = etiquetas;
-  opciones.fechaDesde = fechaDesde;
-  opciones.fechaHasta = fechaHasta;
-*/
+  
     filtrarGastos({periodo: periodo, etiquetasTiene: etiquetas, fechaDesde: fechaDesde, fechaHasta: fechaHasta});
    let funReduce = function(acc, gasto){
    let perAgrup = gasto.obtenerPeriodoAgrupacion(periodo);

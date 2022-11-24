@@ -1,61 +1,130 @@
+import * as gesPresupuesto from "./gestionPresupuesto.js";
 
 function mostrarDatoEnId(idElemento, valor){ //para mostar el valor de un un elemento, se hace referencia a su id
     let elemento = document.getElementById(idElemento);
     elemento.innerText = valor;
 }
 
+
+
  
 function mostrarGastoWeb(idElemento, gasto){ //se crea los elementos div (primero el padre que es <div gasto), en su interior iran los nodos
                                              //hijos descripción, fecha, valor,etiquetas. Cada nodo en un div independiente.
-
   //div gasto
   let divGasto = document.createElement("div");
   divGasto.className = "gasto";
+ //añadir gasto
+  let contenedor = document.getElementById(idElemento);
+ contenedor.append(divGasto);
 
   //div gasto-descripción
   let divDescrip = document.createElement("div");
   divDescrip.className = "gasto-descripcion";
   divDescrip.innerText = gasto.descripcion;
+  divGasto.append(divDescrip);  //Componer objeto gasto -- añadir el nodo divDescrip al nodo padre(divGasto)
 
   //div.fecha
  let divFecha = document.createElement("div");
  divFecha.className = "gasto-fecha";
  divFecha.innerText = gasto.fecha;
+ divGasto.append(divFecha);  //Componer objeto gasto -- añadir el nodo divFecha al nodo padre(divGasto)
 
   //div.valor
  let divValor = document.createElement("div");
  divValor.className = "gasto-valor";
  divValor.innerText = gasto.valor;
+ divGasto.append(divValor);  //Componer objeto gasto -- añadir el nodo divValor al nodo padre(divGasto)
 
  //div.etiquetas
   let divEtiquetas = document.createElement("div");
   divEtiquetas.className = "gasto-etiquetas";
   
-    for ( let eti of gasto.etiquetas){
+    for ( let etiqueta of gasto.etiquetas){
       let spanEti = document.createElement("span");
       spanEti.className = "gasto-etiquetas-etiqueta"
-      spanEti.innerText = eti;
+      spanEti.innerText = etiqueta;
+      
+       let manejadorBorrarEtiqueta = new borrarEtiquetasHandle();
+       manejadorBorrarEtiqueta.gasto = gasto;
+       manejadorBorrarEtiqueta.eliminarEtiqueta = etiqueta;
+       spanEti.addEventListener("click", manejadorBorrarEtiqueta);
+
       divEtiquetas.append(spanEti);
-
   }
+  divGasto.append(divEtiquetas);  //Componer objeto gasto -- añadir el nodo divEtiquetas al nodo padre(divGasto)
+
+  /////Evento borrar etiqueta////////////////////////////
+ 
 
 
- //añadir gasto
- let contenedor = document.getElementById(idElemento);
- contenedor.append(divGasto);
 
-//Componer objeto gasto        ---añadir los nodos (divDescrip, divFecha, divValor, divEtiquetas al nodo padre(divGasto))
-  divGasto.append(divDescrip);
-  divGasto.append(divFecha);
-  divGasto.append(divValor);
-  divGasto.append(divEtiquetas);
+
+
+
+  ////////Crear otro "div" en la función mostrarGastoWeb para contener los botones editar y borrar////////
+  let divGasto2 = document.createElement("div");
+  divGasto2.className = "gasto-botones"
+  let contenedor2 = document.getElementById(idElemento);
+  contenedor2.append(divGasto2);
+
+ ///Crear botón editar//////////////////////
+  let botonEditar = document.createElement("button");
+  botonEditar.className = "gasto-editar"
+  botonEditar.innerHTML = "Editar";
+  divGasto2.append(botonEditar);
+/////manejadorEditar//////////////////////
+  let manejadorEditar = new editarHandle();
+  manejadorEditar.gastoEditar = gasto;
+  botonEditar.addEventListener("click", manejadorEditar);
+
+
+
+//////////Crear botón borrar///////////////
+  let botonBorrar = document.createElement("button");
+  botonBorrar.className = "gasto-borrar"
+  botonBorrar.innerHTML = "Borrar";
+  divGasto2.append(botonBorrar);
+
+  /////manejadorBorrar///////////////////
+  let manejadorBorrar = new borrarHandle();
+  manejadorBorrar.gastoBorrar = gasto;
+  botonBorrar.addEventListener("click", manejadorBorrar);
+
+  
 
 }
 
 
-//////////////////////////////////////////////////////////////---->Prueba<---
 
-function mostrarGastosAgrupadosWeb(idElemento, agrup, periodo){ //fase prueba
+
+
+//////////Función Handle////////
+function editarHandle(){
+
+}
+
+function borrarHandle(){
+  this.handleEvent = function(){
+    gesPresupuesto.borrarGasto(this.gastoBorrar.id);
+    repintar();
+  }
+  
+  }
+
+  function borrarEtiquetasHandle(){
+    this.handleEvent = function(){
+      gesPresupuesto.borrarEtiquetas(this.etiqueta);
+      repintar();
+    }
+
+  }
+  
+
+  
+
+//////////////////////////////////////////////////////////////---->Bien<---
+
+function mostrarGastosAgrupadosWeb(idElemento, agrup, periodo){ 
   let divAgrup = document.createElement("div");  ///div agrupación html
   divAgrup.className = "agrupacion"; 
 
@@ -66,53 +135,25 @@ function mostrarGastosAgrupadosWeb(idElemento, agrup, periodo){ //fase prueba
   divAgrup.append(h1Per);
 
 
-  let divAgrupDato = document.createElement("div"); // div agrupación-Dato html
-  divAgrupDato.className = "agrupacion-dato";
-  
-  
- 
-
  for(let [clave, valor] of Object.entries(agrup)){ //para cada objeto agrup 
-
+  
+    let divAgrupDato = document.createElement("div");// div agrupación-Dato html
+    divAgrupDato.className = "agrupacion-dato";
+    divAgrup.append(divAgrupDato);
+  
     let spanAgrup = document.createElement("span");
     spanAgrup.className = "agrupacion-dato-clave";
-    spanAgrup.innerHTML =  clave;
+    spanAgrup.innerHTML =  clave.split("  ");
     divAgrupDato.append(spanAgrup);
-   
 
     let spanAgrup2 = document.createElement("span");
     spanAgrup2.className = "agrupacion-dato-valor";
     spanAgrup2.innerHTML =  valor;
     divAgrupDato.append(spanAgrup2);
+  
 
 }
 
-
-
-
-
-
-
-   /* spanAgrup.className= "agrupacion-dato-valor";
-    spanAgrup.innerHTML = value;*/
-
-    /*let spanAgrupClave = document.createElement("span");
-    spanAgrupClave.className = "agrupacion-dato-clave";
-    spanAgrupClave.innerHTML =  key;
-    divAgrupDato.append(spanAgrupClave[key]);*/
-
-    /*let spanAgrupValor = document.createElement("span");
-    spanAgrupValor.className ="agrupacion-dato-valor";
-    spanAgrupValor.innerHTML = value;
-    
-    divAgrupDato.append(spanAgrupValor[value]);
-    
-    divAgrupDato.append(spanAgrup);
-  }
-*/
-  
-
-  divAgrup.append(divAgrupDato);
   let cont = document.getElementById(idElemento);
   cont.append(divAgrup);
 
@@ -122,58 +163,74 @@ function mostrarGastosAgrupadosWeb(idElemento, agrup, periodo){ //fase prueba
 export{
     mostrarDatoEnId,
     mostrarGastoWeb,
-    mostrarGastosAgrupadosWeb
+    mostrarGastosAgrupadosWeb,
 }
 
-/*
-//clona el contenido de la plantilla  para reutilizarlo múltiples veces
-let templ= document.createElement("templ");
-let elem  = document.createElement("div");
-
-let copiaPlantilla = templ.content.cloneNode(true);
-let copiaPlantilla2 = templ.content.cloneNode(true);
-
-elem.append(copiaPlantilla); 
-elem.append(copiaPlantilla2);
-
-document.body.append(elem); //agregar en la capa que corresponda
-*/
 
 
-//////Códigos Formulario////////////////
+//////Eventos//////////////// PREUEBA//////////
+function actualizarPresupuestoWeb(){
+  let anyadirValor = prompt("Añade un presupuesto: ");
+  parseFloat(anyadirValor);
+  gesPresupuesto.actualizarPresupuesto(parseFloat(anyadirValor));
+  repintar();
+
+ }
+
+ let buttonActualizarPresupuesto = document.getElementById("actualizarpresupuesto");
+ buttonActualizarPresupuesto.addEventListener("click", actualizarPresupuestoWeb);
+
 
   function repintar(){
 
-  //alert("repintando");
+  mostrarDatoEnId("presupuesto", gesPresupuesto.mostrarPresupuesto());
+
+  mostrarDatoEnId("gastos-totales", gesPresupuesto.calcularTotalGastos());
+
+  mostrarDatoEnId("balance-total", gesPresupuesto.calcularBalance());
+
    let listado = document.createElementById("listado-gastos-completo");
-   listado.innerHTML = "";
+   listado.innerHTML = " ";
 
   for (let g of gesPresupuesto.listarGastos()){
     mostrarGastoWeb("listado-gastos-completo", g);
 }
 
  }
+  //repintar();
+
+   function nuevoGastoWeb(){
+    let descripcion = prompt("Introduzca la descripción: ");
+    let valor = prompt("Introduzca el valor: ");
+    let fecha = prompt("Introduzca la fecha: ");
+    let etiquetas = prompt("Introduzca las etiquetas: ");
+    let gasto = new gesPresupuesto.CrearGasto(descripcion, parseFloat(valor), fecha, etiquetas.split(","));
+    gesPresupuesto.anyadirGasto(gasto);
+    repintar();
+   }
+
+ let botonAnyadirGasto = document.getElementById("anyadirgasto");
+  botonAnyadirGasto.addEventListener("click", nuevoGastoWeb);
+
+
+////////////////Formulario/////////Prueba/////////
+
+/*
 
  function anyadirElementoFormulario(event){
 
      event.preventDefault();
-      
-     //event.target es el formulario
-     //alert(event.target.descripcion.value);
-     //array de etiquetas
      let e = event.target.etiquetas.value.split(",  ");
      let nuevoGasto = new gesPresupuesto.CrearGasto(event.target.descripcion.value, event.target.valor.value,
        event.target.fecha.value, ...e);
-
-       console.log(nuevoGasto);
 
      gesPresupuesto.anyadirGasto(nuevoGasto);
 
      repintar();
 
      let botonAnyadir = document.getElementById("anyadirgasto-formulario");
-    botonAnyadir.disabled = false;
-    event.target.remove();  
+     botonAnyadir.disabled = false;
+     event.target.remove();  
 
  }
 
@@ -206,3 +263,23 @@ function nuevoGastoWebFormulario(event){
 
 let botonAnyadir = document.getElementById("anyadirgasto-formulario");
 botonAnyadir.addEventListener("click",nuevoGastoWebFormulario);
+*/
+
+
+
+
+
+
+/*
+//clona el contenido de la plantilla  para reutilizarlo múltiples veces
+let templ= document.createElement("templ");
+let elem  = document.createElement("div");
+
+let copiaPlantilla = templ.content.cloneNode(true);
+let copiaPlantilla2 = templ.content.cloneNode(true);
+
+elem.append(copiaPlantilla); 
+elem.append(copiaPlantilla2);
+
+document.body.append(elem); //agregar en la capa que corresponda
+*/
