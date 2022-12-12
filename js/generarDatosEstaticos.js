@@ -31,19 +31,8 @@ for (let g of gesPresupuesto.listarGastos()){
     gesPresupuestoWeb.mostrarGastoWeb("listado-gastos-completo", g);
 }
 
-///////////////////////////////////////////////////////---Agrupar Gastos<---
 
-gesPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-dia",gesPresupuesto.agruparGastos("dia"), "día");
-
-
-gesPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-mes",gesPresupuesto.agruparGastos("mes"), "mes");
-
-
-gesPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-anyo",gesPresupuesto.agruparGastos("anyo"), "año");
-///////////////////////////////////////////////////////
-
-
-//////////////////////////Prueba filtrados----//////////////////////
+//////////////////////////filtrados----//////////////////////
 
 
 for (let gt of gesPresupuesto.filtrarGastos({fechaDesde:"2021-09-01", fechaHasta:"2021-09-30"})){
@@ -66,5 +55,16 @@ for (let gt of gesPresupuesto.filtrarGastos({etiquetas:"comida", etiquetas:"tran
 }
 
 
-////////////////////////////////////////////
+
+///////////////////////////////////////////////////////---Agrupar Gastos<---
+
+gesPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-dia",gesPresupuesto.agruparGastos("dia"), "día");
+
+
+gesPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-mes",gesPresupuesto.agruparGastos("mes"), "mes");
+
+
+gesPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-anyo",gesPresupuesto.agruparGastos("anyo"), "año");
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
 

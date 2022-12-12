@@ -98,7 +98,7 @@ function mostrarPresupuesto() {//bien
 },
 
 this.obtenerPeriodoAgrupacion =function(periodo){//bien JS-III
-  let fecha = new Date(this.fecha);
+  let fecha =  new Date(this.fecha);
   let fechaString = fecha.toISOString();
    if (periodo == "dia"){
     return fechaString.substring(0,10);
@@ -191,30 +191,38 @@ function filtrarGastos(opciones){//bien //----->Javascript III<------
 }
 
 
-function agruparGastos(periodo, etiquetas, fechaDesde, fechaHasta){// consultar error.
-  
-    filtrarGastos({periodo: periodo, etiquetasTiene: etiquetas, fechaDesde: fechaDesde, fechaHasta: fechaHasta});
-   let funReduce = function(acc, gasto){
-   let perAgrup = gasto.obtenerPeriodoAgrupacion(periodo);
-    if (acc[perAgrup]){
-      acc[perAgrup] = acc[perAgrup] + gasto.valor;
-
-    }else{
-      acc[perAgrup] = gasto.valor;
-
-    }
-
- //console.log("Gasto: " + gasto.valor + " " + new Date(gasto.fecha));
- //console.log("Acumulador: " + JSON.stringify(acc));
- return acc;
-
-   };
-    let acumulador = {};
-    return gastos.reduce(funReduce, acumulador);
+function agruparGastos(periodo, etiquetas, fechaDesde, fechaHasta){ //bien
+  let opciones = {};
+  opciones.periodo = periodo;
+  opciones.etiquetasTiene = etiquetas;
+  opciones.fechaDesde = fechaDesde;
+  opciones.fechaHasta = fechaHasta;
+  let gastosFiltrados = filtrarGastos(opciones);
+  let funReduce = function( acc, gasto) {
+      let perAgrup = gasto.obtenerPeriodoAgrupacion(periodo);
+      if (acc[perAgrup]) {
+          acc[perAgrup] += gasto.valor;
+      } else {
+          acc[perAgrup] = gasto.valor;
+      }
      
- 
+      return acc;
+  };
+  let acumulador = {};
+  return gastosFiltrados.reduce(funReduce, acumulador);
+
 }
   
+
+
+
+
+
+
+
+
+
+
 
 // NO MODIFICAR A PARTIR DE AQUÍ: exportación de funciones y objetos creados para poder ejecutar los tests.
 // Las funciones y objetos deben tener los nombres que se indican en el enunciado
@@ -230,5 +238,6 @@ export   {
     calcularBalance,
     filtrarGastos,
     agruparGastos,
+    
 
 }
