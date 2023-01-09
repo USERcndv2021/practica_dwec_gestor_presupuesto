@@ -172,6 +172,7 @@ export{
     mostrarDatoEnId,
     mostrarGastoWeb,
     mostrarGastosAgrupadosWeb,
+    filtrarGastosWeb,
 }
 
 
@@ -270,7 +271,9 @@ function anyadirElementoFormulario(event){ //4- Creamos una función para obtene
                                             // irá asociada al evento "submit" de la función nuevoGastoEbFormulario()
   event.preventDefault(); //5- Prevenir el envío del formulario
   let eti = event.target.etiquetas.value.split(",  ");
-  let nuevoGasto = new gesPresupuesto.CrearGasto(event.target.descripcion.value, event.target.valor.value, 
+  let valorNum = event.target.valor.value;
+   valorNum = parseFloat(valorNum);
+  let nuevoGasto = new gesPresupuesto.CrearGasto(event.target.descripcion.value, valorNum, 
     event.target.fecha.value, ...eti);     //6- creamos nuevoGasto con sus propiedades.
 
   gesPresupuesto.anyadirGasto(nuevoGasto); //7- añadimos el nuevoGasto a la lista de gastos --archivo gesPresupuesto
@@ -354,14 +357,78 @@ function editarHandleFormulario () {
 }
 
 
+////////////////////Expresiones Regulares//////////////////////
+
+function filtrarGastosWeb () {
+
+  this.handleEvent = function(event) {
+    //Prevenir el envío del formulario
+     event.preventDefault();
+  
+     let formulario = event.currentTarget;
+     let descripcion = formulario.elements['formulario-filtrado-descripcion'].value;
+     let valorMinimo = formulario.elements['formulario-filtrado-valor-minimo'].value;
+     let valorMaximo = formulario.elements['formulario-filtrado-valor-maximo'].value;
+     let fechaDesde = formulario.elements['formulario-filtrado-fecha-desde'].value;
+     let fechaHasta = formulario.elements['formulario-filtrado-fecha-hasta'].value;
+     let etiquetas = formulario.elements['formulario-filtrado-etiquetas-tiene'].value;
+    if(etiquetas) {
+                    etiquetas = gesPresupuesto.transformarListadoEtiquetas(etiquetas);
+                  } 
+                  //llamar a la función filtrarGastos del paquete gestionPresupuesto
+                 let gastosFiltradosFormulario= gesPresupuesto.filtrarGastos({fechaDesde: fechaDesde, fechaHasta: fechaHasta, 
+                valorMinimo: valorMinimo, valorMaximo: valorMaximo, descripcionContiene: descripcion, etiquetasTiene: etiquetas,}); 
+                //Actualizar la lista de gastos filtrados en la capa listado-gastos-completo mediante la función mostrarGastoWeb.
+               document.getElementById('listado-gastos-completo').innerHTML = "";
+                      for (let gastos of gastosFiltradosFormulario) 
+                {
+                    mostrarGastoWeb('listado-gastos-completo', gastos);
+                }   
+   }
+ }
+
+         //añadir como manejadora del evento submit del formulario formulario-filtrado.
+    let gastosFiltradosFormulario = new filtrarGastosWeb();
+    document.getElementById( "formulario-filtrado" ).addEventListener( "submit", gastosFiltradosFormulario);
 
 
 
 
+////////////////////////////////////////Almacenamiento///////////////////////////////////////REVISAR
+
+function guardarGastosWeb(){
+  this.handleEvent = function() {
+    localStorage.GestorGastosDWEC = JSON.stringify(gesPresupuesto.listarGastos());
+ }
+
+}
+
+let guardarGastos = new guardarGastosWeb();
+document.getElementById("guardar-gastos").addEventListener("click", guardarGastos);
+
+
+function cargarGastosWeb(){
+  this.handleEvent = function() {
+    let cargaGastos = JSON.parse(localStorage.getItem("GestorGastosDWEC"));
+    //1-Si no existe la clave en el almacenamiento, llamará a cargarGastos con un array vacío.
+    if(!cargaGastos) {
+        gesPresupuesto.cargarGastos([]);
+    }
+    else {
+        gesPresupuesto.cargarGastos(cargaGastos);
+    }
+    //2-Cargados los gastos, llamar a la función repintar para que se muestren correctamente en el HTML.
+    repintar();
+}
+  
+}
+
+    let cargarGastos = new cargarGastosWeb();
+    document.getElementById("cargar-gastos").addEventListener("click", cargarGastos);
 
 
 
+//////////////////////////////////
 
 
-
-
+    
